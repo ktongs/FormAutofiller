@@ -1,2 +1,3 @@
-.idea
-Test/client_secret.json
+Source/.idea
+Source/_pycache_
+Source/client_secret.json
