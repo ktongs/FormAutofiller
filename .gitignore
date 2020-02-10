@@ -3,3 +3,7 @@ Source/_pycache_
 Source/client_secret.json
 .DS_Store
 .idea/
+Source/build
+.vscode/
+Source/.vscode/
+Source/__pycache__
