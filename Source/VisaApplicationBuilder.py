@@ -7,6 +7,7 @@ REQUIRES 'client_secret.json' FILE FOR GOOGLE SHEETS API
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import string
+import time
 from random import *
 from datetime import date
 import gspread
@@ -21,6 +22,7 @@ def Generate_UserID(count):
     #     userID = 'asd'
     driver.find_element_by_name('uid').send_keys(userID)
     driver.find_element_by_name('_eventId_submit').click()
+    time.sleep(1)
     newCount = count + 1
     userID = Check_UserID(newCount,userID)
     return userID
@@ -51,6 +53,7 @@ def Generate_password(count):
     driver.find_element_by_name('password').send_keys(password)
     driver.find_element_by_name('confirmPassword').send_keys(password)
     driver.find_element_by_name('_eventId_submit').click()
+    time.sleep(1)
     newCount = count + 1
     password = Check_Password(newCount,password)
     return password
@@ -72,7 +75,9 @@ def Check_Password(count,password):
 
 def Create_Account ():
     driver.find_element_by_xpath("//*[@title='Sign Up / Register for a new GCKey'][@class='btn btn-primary']").click()
-    driver.find_element_by_name('_eventId_accept').click()
+    time.sleep(1)
+    driver.find_element_by_id('Accept').click()
+    time.sleep(1)
 
 def Generate_Recovery_Questions():
     recoveryQuestion = 'Pet'
@@ -80,15 +85,12 @@ def Generate_Recovery_Questions():
     memorablePerson = 'answer 2'
     memorableDate = '20000101'
     driver.find_element_by_xpath("//select[@id='recoveryQuestion']/option[@value='2']").click()
-    # e1 = driver.find_element_by_id('recoveryQuestion')
-    # for option in e1.find_elements_by_tag_name('option'):
-    #     if option.text == "What was my first pet's name?":
-    #         option.click()
-    #         break
+    time.sleep(1)
     driver.find_element_by_id('recoveryAnswer').send_keys(recoveryAnswer)
     driver.find_element_by_id('memorablePerson').send_keys(memorablePerson)
     driver.find_element_by_id('memorableDate').send_keys(memorableDate)
     driver.find_element_by_name('_eventId_submit').click()
+    time.sleep(1)
     return (recoveryQuestion,recoveryAnswer,memorablePerson,memorableDate)
 
 def Sign_Up():
@@ -96,8 +98,10 @@ def Sign_Up():
     userID = Generate_UserID(0)
     password = Generate_password(0)
     [recoveryQuestion, recoveryAnswer, memorablePerson, memorableDate] = Generate_Recovery_Questions()
-    driver.find_element_by_id('continue').click() #Finish with account creation
+    driver.find_element_by_id('continue').click()
+    time.sleep(1) #Finish with account creation
     driver.find_element_by_id('_continue').click()
+    time.sleep(1)
 
     return (userID,password,recoveryQuestion, recoveryAnswer, memorablePerson, memorableDate)
 
@@ -105,8 +109,10 @@ def Fill_Name(givenName,lastName,email):
     driver.find_element_by_id('givenName').send_keys(givenName)
     driver.find_element_by_id('familyName').send_keys(lastName)
     driver.find_element_by_id('emailAddress').send_keys(email)
-    driver.find_element_by_xpath("//option[@value='3034']").click() #English as language
+    driver.find_element_by_xpath("//option[@value='3034']").click()
+    time.sleep(1) #English as language
     driver.find_element_by_id('_continue').click()
+    time.sleep(1)
 def Fill_Security_Questions():
     driver.find_element_by_id('question1').send_keys('Security Question 1')
     driver.find_element_by_id('answer1').send_keys('Answer 1')
@@ -117,22 +123,31 @@ def Fill_Security_Questions():
     driver.find_element_by_id('question4').send_keys('Security Question 4')
     driver.find_element_by_id('answer4').send_keys('Answer 4')
     driver.find_element_by_id('_continue').click()
+    time.sleep(1)
 
 def Fill_Apply_Eligible(countryCode,DoB,province): #Commands to apply for study permit
     driver.get('https://onlineservices-servicesenligne.cic.gc.ca/mycic/home/kitReferenceClaim') # Select apply to come to Canada
     driver.find_element_by_xpath("//input[@title='Visitor visa, study and/or work permit']").click()
+    time.sleep(1)
     # driver.find_element_by_xpath("//input[@title='Visitor visa, study and/or work permit']").click()
-    driver.find_element_by_xpath("//option[@value='7120']").click() #What would you like to do in Canada? = Study
-    driver.find_element_by_xpath("//option[@value='7347']").click() #How long are you planning to stay in Canada? = Temporarily >6 months
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='7120']").click()
+    time.sleep(1) #What would you like to do in Canada? = Study
+    driver.find_element_by_xpath("//option[@value='7347']").click()
+    time.sleep(1) #How long are you planning to stay in Canada? = Temporarily >6 months
 
     #Select the code that matches the one on your passport.
     if countryCode == 'Hong Kong':
         driver.find_element_by_xpath("//option[@value='13401']").click()
+        time.sleep(1)
     elif countryCode == 'China':
         driver.find_element_by_xpath("//option[@value='13403']").click()
+        time.sleep(1)
 
-    driver.find_element_by_xpath("//option[@value='2001']").click() #Current country=Canada
-    driver.find_element_by_xpath("//option[@value='997']").click() #Canadian family member=No
+    driver.find_element_by_xpath("//option[@value='2001']").click()
+    time.sleep(1) #Current country=Canada
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1) #Canadian family member=No
 
     yearDict = {}
     for i in range(1913, 2008):
@@ -149,37 +164,57 @@ def Fill_Apply_Eligible(countryCode,DoB,province): #Commands to apply for study 
 
     [month, day, year] = Date_Str_To_Int(DoB)
     driver.find_element_by_xpath('//option[@value="'+str(yearDict[year])+'"]').click()
+    time.sleep(1)
     driver.find_element_by_xpath('//option[@value="' + str(monthDict[month]) + '"]').click()
+    time.sleep(1)
     driver.find_element_by_xpath('//option[@value="' + str(dayDict[day]) + '"]').click()
+    time.sleep(1)
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click() #Resident of US with Grean Card = No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1) #Resident of US with Grean Card = No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='7124']").click() #Current status = student
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='7124']").click()
+    time.sleep(1) #Current status = student
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='4677']").click() #Marital status = single
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='4677']").click()
+    time.sleep(1) #Marital status = single
     if province == 'British Columbia':
         driver.find_element_by_xpath("//option[@value='2721']").click()
+        time.sleep(1)
     elif province == 'Ontario':
         driver.find_element_by_xpath("//option[@value='2731']").click()
+        time.sleep(1)
     driver.find_element_by_id('_next').click()
+    time.sleep(1)
     born = date(year,month,day)
     age = calculate_age(born)
     if province == 'British Columbia':
         if age < 19:
-            driver.find_element_by_xpath("//option[@value='997']").click() #Living with parent or guardian = No
+            driver.find_element_by_xpath("//option[@value='997']").click()
+            time.sleep(1) #Living with parent or guardian = No
             driver.find_element_by_id('_next').click()
+            time.sleep(1)
     else:
         if age < 18:
-            driver.find_element_by_xpath("//option[@value='997']").click()  # Living with parent or guardian = No
+            driver.find_element_by_xpath("//option[@value='997']").click()
+            time.sleep(1)  # Living with parent or guardian = No
             driver.find_element_by_id('_next').click()
+            time.sleep(1)
 
 def Apply_Study_Permit(expiryDate):
     driver.get('https://onlineservices-servicesenligne.cic.gc.ca/eapp/comeToCanadaHowToApply.do?rtValue=7569&nextQuestionId=994')
     driver.get('https://onlineservices-servicesenligne.cic.gc.ca/eapp/action.do?action=returnToApplication&questionId=994')
-    driver.find_element_by_xpath("//option[@value='997']").click() #Accompanying a family member with status in Canada? = No
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1) #Accompanying a family member with status in Canada? = No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='7515']").click()  # Apply for work permit = No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='7515']").click()
+    time.sleep(1)  # Apply for work permit = No
     driver.find_element_by_id('_next').click()
+    time.sleep(1)
 
     [month,day,year] = Date_Str_To_Int(expiryDate)
     yearDict = {}
@@ -195,49 +230,93 @@ def Apply_Study_Permit(expiryDate):
         dayDict[i] = i + 546
 
     driver.find_element_by_xpath('//option[@value="' + str(yearDict[year]) + '"]').click()
+    time.sleep(1)
     driver.find_element_by_xpath('//option[@value="' + str(monthDict[month]) + '"]').click()
+    time.sleep(1)
     driver.find_element_by_xpath('//option[@value="' + str(dayDict[day]) + '"]').click()
+    time.sleep(1)
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click() #Had a medical exam performed? =No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1) #Had a medical exam performed? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click()  #Lived in designated country? =No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1)  #Lived in designated country? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click()  #Submit for family member? =No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1)  #Submit for family member? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_id('answerlist[0]-radiobutton1').click() #Give someone access to application? = Yes, appointing a rep
+    time.sleep(1)
+    driver.find_element_by_id('answerlist[0]-radiobutton1').click()
+    time.sleep(1) #Give someone access to application? = Yes, appointing a rep
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click()  #Submission letter provided? =No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1)  #Submission letter provided? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='7644']").click()  #Paying fees? =Yes
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='7644']").click()
+    time.sleep(1)  #Paying fees? =Yes
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='991']").click()  #Digital copy of documents? =Yes
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='991']").click()
+    time.sleep(1)  #Digital copy of documents? =Yes
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='991']").click()  #Pay online? =Yes
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='991']").click()
+    time.sleep(1)  #Pay online? =Yes
     driver.find_element_by_id('_next').click()
+    time.sleep(1)
 
 def Apply_Temporary_Resident_Visa():
     driver.get('https://onlineservices-servicesenligne.cic.gc.ca/eapp/comeToCanadaHowToApply.do?rtValue=7572&nextQuestionId=985')
     driver.get('https://onlineservices-servicesenligne.cic.gc.ca/eapp/action.do?action=returnToApplication&questionId=985')
-    driver.find_element_by_xpath("//option[@value='7517']").click()  # Your situation? =I have a study permit
+    driver.find_element_by_xpath("//option[@value='7517']").click()
+    time.sleep(1)  # Your situation? =I have a study permit
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click()  # Had a medical exam performed? =No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1)  # Had a medical exam performed? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click()  # Lived in designated country? =No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1)  # Lived in designated country? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click()  # Work in following jobs? =No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1)  # Work in following jobs? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click()  # Submit for family member? =No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1)  # Submit for family member? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_id('answerlist[0]-radiobutton1').click()  # Give someone access to application? = Yes, appointing a rep
+    time.sleep(1)
+    driver.find_element_by_id('answerlist[0]-radiobutton1').click()
+    time.sleep(1)  # Give someone access to application? = Yes, appointing a rep
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='997']").click()  #Submission letter provided? =No
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1)  #Submission letter provided? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='7644']").click()  #Paying fees? =Yes
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='997']").click()
+    time.sleep(1) #In the past 10 years, have you given your fingerprints and photo (biometrics) for an application to come to Canada? =No
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='991']").click()  #Digital copy of documents? =Yes
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='7644']").click()
+    time.sleep(1)  #Paying fees? =Yes
     driver.find_element_by_id('_next').click()
-    driver.find_element_by_xpath("//option[@value='991']").click()  #Pay online? =Yes
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='991']").click()
+    time.sleep(1)  #Digital copy of documents? =Yes
     driver.find_element_by_id('_next').click()
+    time.sleep(1)
+    driver.find_element_by_xpath("//option[@value='991']").click()
+    time.sleep(1)  #Pay online? =Yes
+    driver.find_element_by_id('_next').click()
+    time.sleep(1)
 
 def WriteToSheet(userID, password, recoveryQuestion, recoveryAnswer, memorablePerson, memorableDate,row):
     featureToColumn = {userID:10,password:11,recoveryQuestion:12,recoveryAnswer:13,memorablePerson:14,memorableDate:15}
